@@ -8,18 +8,18 @@ from tableauhyperapi import SqlType
 @pytest.fixture
 def get_pyarrow_table():
     array = [
-        pa.array([1], type=pa.int8()),
-        pa.array([1], type=pa.int16()),
-        pa.array([1], type=pa.int32()),
-        pa.array([1], type=pa.int64()),
-        pa.array(['a'], type=pa.string()),
-        pa.array([1.0], type=pa.float32()),
-        pa.array([1.0], type=pa.float64()),
-        pa.array([True], type=pa.bool_() ),
-        pa.array([dt.datetime(2023, 1, 1, 0, 0, 0)], type=pa.timestamp('us')),
-        pa.array([dt.date(2023, 1, 1)], type=pa.date32()),
-        pa.array([dt.date(2023, 1, 1)], type=pa.date64()),
-        pa.array([b'a'], type=pa.binary())
+        pa.array([1, 2], type=pa.int8()),
+        pa.array([1, 2], type=pa.int16()),
+        pa.array([1, 2], type=pa.int32()),
+        pa.array([1, 2], type=pa.int64()),
+        pa.array(['a', 'b'], type=pa.string()),
+        pa.array([1.0, 1.5], type=pa.float32()),
+        pa.array([1.0, 1.5], type=pa.float64()),
+        pa.array([True, False], type=pa.bool_()),
+        pa.array([dt.datetime(2023, 1, 1, 0, 0, 0), dt.datetime.now()], type=pa.timestamp('us')),
+        pa.array([dt.date(2023, 1, 1), dt.date.today()], type=pa.date32()),
+        pa.array([dt.date(2023, 1, 1), dt.date.today()], type=pa.date64()),
+        pa.array([b'a', b'b'], type=pa.binary())
     ]
     names = [
         'int8', 'int16', 'int32', 'int64', 'string', 'float32',
@@ -33,8 +33,8 @@ def get_pyarrow_schema(get_pyarrow_table):
 
 
 def test_convert_struct_field(get_pyarrow_schema):
-    assert hu._convert_struct_field(get_pyarrow_schema[0]).type  == SqlType.int()
-    assert hu._convert_struct_field(get_pyarrow_schema[1]).type  == SqlType.int()
+    assert hu._convert_struct_field(get_pyarrow_schema[0]).type  == SqlType.small_int()
+    assert hu._convert_struct_field(get_pyarrow_schema[1]).type  == SqlType.small_int()
     assert hu._convert_struct_field(get_pyarrow_schema[2]).type  == SqlType.int()
     assert hu._convert_struct_field(get_pyarrow_schema[3]).type  == SqlType.big_int()
     assert hu._convert_struct_field(get_pyarrow_schema[4]).type  == SqlType.text()
@@ -53,8 +53,8 @@ def test_get_table_def(get_pyarrow_table):
     with pa.parquet.ParquetFile(now) as file:
         table_def = hu.get_table_def(file)
     os.remove(now)
-    assert table_def.columns[0].type == SqlType.int()
-    assert table_def.columns[1].type == SqlType.int()
+    assert table_def.columns[0].type == SqlType.small_int()
+    assert table_def.columns[1].type == SqlType.small_int()
     assert table_def.columns[2].type == SqlType.int()
     assert table_def.columns[3].type == SqlType.big_int()
     assert table_def.columns[4].type == SqlType.text()

@@ -24,7 +24,9 @@ def _convert_struct_field(column : ChunkedArray) -> TableDefinition.Column:
         sql_type = SqlType.date()
     elif column.type in [pa.float32(), pa.float64()]:
         sql_type = SqlType.double()
-    elif column.type in [pa.int8(), pa.int16(), pa.int32()]:
+    elif column.type in [pa.int8(), pa.int16()]:
+        sql_type = SqlType.small_int()
+    elif column.type == pa.int32():
         sql_type = SqlType.int()
     elif column.type == pa.int64():
         sql_type = SqlType.big_int()
