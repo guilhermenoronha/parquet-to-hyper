@@ -1,4 +1,5 @@
 # Parquet to Hyper
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/guilhermenoronha/parquet-to-hyper/python-package.yml?label=tests)
 
 Package to convert parquet files into a single hyper file. 
 
