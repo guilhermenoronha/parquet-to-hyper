@@ -51,12 +51,14 @@ class HyperFile():
 
     @timeit
     def delete_rows(self, hyper_path: str, date_column : str, days_to_delete : int) -> int:
-        """Function that copies data from a Parquet file to a .hyper file.
+        """Delete rows from a hyper file based on date column and days before to delete.
 
         Args:
             hyper_path (str): hyper file path. Eg: path/hyper.file 
             days_to_delete (int): the window in days to be deleted from the database
             date_column (str): name of date column to be used in the incremental strategy
+        Returns:
+            int: number of deleted rows            
         """
         with HyperProcess(telemetry=Telemetry.DO_NOT_SEND_USAGE_DATA_TO_TABLEAU) as hp:
             with Connection(endpoint=hp.endpoint,
@@ -67,3 +69,28 @@ class HyperFile():
                 logging.info(f'Process completed with {count} rows deleted.')        
         return count
         
+    def append_rows(self, hyper_path: str) -> int:
+        """Append rows from parquet files into an existing hyper file
+
+        Args:
+            hyper_path (str): hyper file path. Eg: path/hyper.file 
+
+        Returns:
+            int: number of appended rows  
+        """
+        with HyperProcess(telemetry=Telemetry.DO_NOT_SEND_USAGE_DATA_TO_TABLEAU) as hp:
+            with Connection(endpoint=hp.endpoint,
+                            database=hyper_path,
+                            create_mode=CreateMode.NONE) as connection:
+                total_rows = 0
+                files = hu.get_parquet_files(self.parquet_folder, self.file_extension)
+                for parquet_path in files:
+                    try:
+                        copy_command = f"COPY \"Extract\".\"Extract\" from '{parquet_path}' with (format parquet)"
+                        count = connection.execute_command(copy_command)
+                        total_rows += count
+                    except Exception as e:
+                        logging.warning(f'File {os.path.basename(parquet_path)} could not be processed. {e}')
+                        logging.info(f'Error message: {e}')
+                logging.info(f'Process completed with {total_rows} rows added.')
+        return total_rows

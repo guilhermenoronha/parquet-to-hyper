@@ -1,4 +1,3 @@
-    
 from pyarrow import ChunkedArray
 from tableauhyperapi import SqlType, TableDefinition, NULLABLE, NOT_NULLABLE, TableName
 from pyarrow.parquet import ParquetFile
