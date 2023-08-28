@@ -3,7 +3,8 @@ import logging
 import time
 from typing import Callable
 
-def timeit(func : Callable) -> Callable:
+
+def timeit(func: Callable) -> Callable:
     """Decorator to measure time of execution of a function
 
     Args:

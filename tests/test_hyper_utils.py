@@ -5,6 +5,7 @@ import datetime as dt
 import os
 from tableauhyperapi import SqlType
 
+
 @pytest.fixture
 def get_pyarrow_table():
     array = [
@@ -16,7 +17,8 @@ def get_pyarrow_table():
         pa.array([1.0, 1.5], type=pa.float32()),
         pa.array([1.0, 1.5], type=pa.float64()),
         pa.array([True, False], type=pa.bool_()),
-        pa.array([dt.datetime(2023, 1, 1, 0, 0, 0), dt.datetime.now()], type=pa.timestamp('us')),
+        pa.array([dt.datetime(2023, 1, 1, 0, 0, 0), dt.datetime.now()], 
+                 type=pa.timestamp('us')),
         pa.array([dt.date(2023, 1, 1), dt.date.today()], type=pa.date32()),
         pa.array([dt.date(2023, 1, 1), dt.date.today()], type=pa.date64()),
         pa.array([b'a', b'b'], type=pa.binary())
@@ -33,18 +35,20 @@ def get_pyarrow_schema(get_pyarrow_table):
 
 
 def test_convert_struct_field(get_pyarrow_schema):
-    assert hu._convert_struct_field(get_pyarrow_schema[0]).type  == SqlType.small_int()
-    assert hu._convert_struct_field(get_pyarrow_schema[1]).type  == SqlType.small_int()
-    assert hu._convert_struct_field(get_pyarrow_schema[2]).type  == SqlType.int()
-    assert hu._convert_struct_field(get_pyarrow_schema[3]).type  == SqlType.big_int()
-    assert hu._convert_struct_field(get_pyarrow_schema[4]).type  == SqlType.text()
-    assert hu._convert_struct_field(get_pyarrow_schema[5]).type  == SqlType.double()
-    assert hu._convert_struct_field(get_pyarrow_schema[6]).type  == SqlType.double()
-    assert hu._convert_struct_field(get_pyarrow_schema[7]).type  == SqlType.bool()
-    assert hu._convert_struct_field(get_pyarrow_schema[8]).type  == SqlType.timestamp()
-    assert hu._convert_struct_field(get_pyarrow_schema[9]).type  == SqlType.date()
-    assert hu._convert_struct_field(get_pyarrow_schema[10]).type == SqlType.date()
-    assert hu._convert_struct_field(get_pyarrow_schema[11]).type == SqlType.bytes()
+    gps = get_pyarrow_schema
+    assert hu._convert_struct_field(gps[0]).type == SqlType.small_int()
+    assert hu._convert_struct_field(gps[1]).type == SqlType.small_int()
+    assert hu._convert_struct_field(gps[2]).type == SqlType.int()
+    assert hu._convert_struct_field(gps[3]).type == SqlType.big_int()
+    assert hu._convert_struct_field(gps[4]).type == SqlType.text()
+    assert hu._convert_struct_field(gps[5]).type == SqlType.double()
+    assert hu._convert_struct_field(gps[6]).type == SqlType.double()
+    assert hu._convert_struct_field(gps[7]).type == SqlType.bool()
+    assert hu._convert_struct_field(gps[8]).type == SqlType.timestamp()
+    assert hu._convert_struct_field(gps[9]).type == SqlType.date()
+    assert hu._convert_struct_field(gps[10]).type == SqlType.date()
+    assert hu._convert_struct_field(gps[11]).type == SqlType.bytes()
+
 
 def test_get_table_def(get_pyarrow_table):
     df = get_pyarrow_table
@@ -65,6 +69,7 @@ def test_get_table_def(get_pyarrow_table):
     assert table_def.columns[9].type == SqlType.date()
     assert table_def.columns[10].type == SqlType.date()
     assert table_def.columns[11].type == SqlType.bytes()
+
 
 def test_get_parquet_files(get_pyarrow_table):
     df = get_pyarrow_table
