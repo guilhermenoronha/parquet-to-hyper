@@ -6,6 +6,7 @@ import datetime as dt
 import pytest
 import os
 
+
 @pytest.fixture
 def create_hyper_file(get_pyarrow_table):
     def _method(hyper_filename):
@@ -17,14 +18,17 @@ def create_hyper_file(get_pyarrow_table):
         return hf
     return _method
 
+
 def test_create_hyper_file(create_hyper_file):
     filename = 'test.hyper'
     create_hyper_file(filename)
     with HyperProcess(Telemetry.SEND_USAGE_DATA_TO_TABLEAU) as hyper:
-        with Connection(hyper.endpoint, filename, CreateMode.NONE) as connection:
-            rows = connection.execute_scalar_query('SELECT COUNT(*) FROM "Extract"."Extract"')   
+        with Connection(hyper.endpoint, filename, CreateMode.NONE) as con:
+            rows = con.execute_scalar_query(
+                'SELECT COUNT(*) FROM "Extract"."Extract"')
     os.remove(filename)
     assert rows == 2
+
 
 def test_delete_rows(create_hyper_file):
     filename = 'test.hyper'
@@ -33,12 +37,14 @@ def test_delete_rows(create_hyper_file):
     os.remove(filename)
     assert count == 1
 
+
 def test_append_rows(create_hyper_file):
     filename = 'test.hyper'
     hf = create_hyper_file(filename)
     hf.append_rows(filename)
     with HyperProcess(Telemetry.SEND_USAGE_DATA_TO_TABLEAU) as hyper:
-        with Connection(hyper.endpoint, filename, CreateMode.NONE) as connection:
-            rows = connection.execute_scalar_query('SELECT COUNT(*) FROM "Extract"."Extract"')
+        with Connection(hyper.endpoint, filename, CreateMode.NONE) as con:
+            rows = con.execute_scalar_query(
+                'SELECT COUNT(*) FROM "Extract"."Extract"')
     os.remove(filename)
     assert rows == 4
