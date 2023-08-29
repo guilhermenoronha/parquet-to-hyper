@@ -11,6 +11,12 @@ To be announced soon.
 
 ## How to use
 
+### Installation
+
+```shell
+pip install parquet-to-hyper
+```
+
 ### Initializing object
 
 ```python

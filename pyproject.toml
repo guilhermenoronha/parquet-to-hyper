@@ -1,4 +1,56 @@
-[tool.pytest.ini_options]
-pythonpath = [
-    ".", "packages"
+[build-system]
+requires = ["setuptools>=68.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "parquet-to-hyper"
+version = "1.0.0"
+authors = [{name="Guilherme Noronha", email="guilhermenoronha2001@gmail.com"}]
+license = { file = "LICENSE" }
+description = "Create and publish tableau hyper files from parquet files."
+readme = "README.md"
+requires-python = ">=3.9"
+keywords = ["Parquet", "Tableau", "Hyper", "Extract"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent"    
 ]
+dependencies = [
+    "tableauhyperapi <= 0.0.17002",
+    "tableauserverclient <= 0.24",
+    "pyarrow >= 11.0.0"
+]
+
+[project.optional-dependencies]
+dev = ["pip-tools", "pytest", "bumpver"]
+
+[project.urls]
+"Homepage" = "https://github.com/guilhermenoronha/parquet-to-hyper"
+"Bug Tracker" = "https://github.com/guilhermenoronha/parquet-to-hyper/issues"
+
+[tool.pytest.ini_options]
+pythonpath = [".", "packages"]
+
+[tool.bumpver]
+current_version = "1.0.0"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message = "bump version {old_version} -> {new_version}"
+tag_message = "{new_version}"
+tag_scope = "default"
+pre_commit_hook = ""
+post_commit_hook = ""
+commit = true
+tag = true
+push = true
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = [
+    'current_version = "{version}"',
+    'version = "{version}"'
+]
+"README.md" = [
+    "{version}",
+    "{pep440_version}",
+]
+
