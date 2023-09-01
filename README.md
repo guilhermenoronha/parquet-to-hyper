@@ -55,3 +55,13 @@ rows  = hf.append_rows(hyper_filename)
 print(f'{rows} were appended.')
 ```
 
+### Publishing hyper file into Tableau server
+
+```python
+from packages.hyper_file import HyperFile
+
+tsu = TableauServerUtils(tableau_address, token_name, token_value)
+project_id = tsu.get_project_id(project_name)
+tsu.publish_hyper(project_id, 'test.hyper')
+```
+
