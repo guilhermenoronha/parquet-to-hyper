@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "parquet-to-hyper"
-version = "1.1.1"
+version = "1.1.2"
 authors = [{name="Guilherme Noronha", email="guilhermenoronha2001@gmail.com"}]
 license = { file = "LICENSE" }
 description = "Create and publish tableau hyper files from parquet files."
@@ -33,7 +33,7 @@ dev = ["pip-tools", "pytest", "bumpver"]
 pythonpath = [".", "packages"]
 
 [tool.bumpver]
-current_version = "1.1.1"
+current_version = "1.1.2"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit_message = "bump version {old_version} -> {new_version}"
 tag_message = "{new_version}"
