@@ -17,17 +17,20 @@ def get_pyarrow_table():
         pa.array([1.0, 1.5], type=pa.float32()),
         pa.array([1.0, 1.5], type=pa.float64()),
         pa.array([True, False], type=pa.bool_()),
-        pa.array([dt.datetime(2023, 1, 1, 0, 0, 0), dt.datetime.now()], 
+        pa.array([dt.datetime(2023, 1, 1, 0, 0, 0), dt.datetime.now()],
                  type=pa.timestamp('us')),
         pa.array([dt.date(2023, 1, 1), dt.date.today()], type=pa.date32()),
         pa.array([dt.date(2023, 1, 1), dt.date.today()], type=pa.date64()),
-        pa.array([b'a', b'b'], type=pa.binary())
+        pa.array([b'a', b'b'], type=pa.binary()),
+        pa.array([1234, 1234], type=pa.decimal128(7, 3))
     ]
     names = [
         'int8', 'int16', 'int32', 'int64', 'string', 'float32',
-        'float64', 'bool', 'timestamp', 'date32', 'date64', 'binary'
+        'float64', 'bool', 'timestamp', 'date32', 'date64',
+        'binary', 'decimal128'
     ]
     yield pa.table(array, names=names)
+
 
 @pytest.fixture
 def get_pyarrow_schema(get_pyarrow_table):
@@ -48,6 +51,7 @@ def test_convert_struct_field(get_pyarrow_schema):
     assert hu._convert_struct_field(gps[9]).type == SqlType.date()
     assert hu._convert_struct_field(gps[10]).type == SqlType.date()
     assert hu._convert_struct_field(gps[11]).type == SqlType.bytes()
+    assert hu._convert_struct_field(gps[12]).type == SqlType.numeric(7, 3)
 
 
 def test_get_table_def(get_pyarrow_table):
@@ -69,6 +73,7 @@ def test_get_table_def(get_pyarrow_table):
     assert table_def.columns[9].type == SqlType.date()
     assert table_def.columns[10].type == SqlType.date()
     assert table_def.columns[11].type == SqlType.bytes()
+    assert table_def.columns[12].type == SqlType.numeric(7, 3)
 
 
 def test_get_parquet_files(get_pyarrow_table):
