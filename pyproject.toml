@@ -54,6 +54,3 @@ push = true
     "{pep440_version}",
 ]
 
-[tool.setuptools]
-py-modules = []
-
