@@ -46,7 +46,7 @@ class HyperFile():
                 total_rows = 0
                 for file in files:
                     try:
-                        copy_command = f"COPY \"Extract\".\"Extract\" from '{file}' with (format parquet)"
+                        copy_command = f"COPY \"Extract\".\"Extract\" from '{file}' with (format parquet)" # noqa
                         count = conn.execute_command(copy_command)
                         total_rows += count
                     except Exception as e:
@@ -72,7 +72,7 @@ class HyperFile():
             with Connection(endpoint=hp.endpoint,
                             database=hyper_path,
                             create_mode=CreateMode.NONE) as connection:
-                qry = f'DELETE FROM \"Extract\".\"Extract\" WHERE {escape_name(date_column)} >= CURRENT_DATE - {days_to_delete}'
+                qry = f'DELETE FROM \"Extract\".\"Extract\" WHERE {escape_name(date_column)} >= CURRENT_DATE - {days_to_delete}' # noqa
                 count = connection.execute_command(qry)
                 log.info(f'Process completed with {count} rows deleted.')
         return count
@@ -96,7 +96,7 @@ class HyperFile():
                                              self.file_extension)
                 for parquet_path in files:
                     try:
-                        copy_command = f"COPY \"Extract\".\"Extract\" from '{parquet_path}' with (format parquet)"
+                        copy_command = f"COPY \"Extract\".\"Extract\" from '{parquet_path}' with (format parquet)" # noqa
                         count = connection.execute_command(copy_command)
                         total_rows += count
                     except Exception as e:

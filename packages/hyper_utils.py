@@ -37,6 +37,10 @@ def _convert_struct_field(column: ChunkedArray) -> TableDefinition.Column:
         sql_type = SqlType.timestamp()
     elif column.type == pa.binary():
         sql_type = SqlType.bytes()
+    elif str(column.type).startswith("decimal"):
+        precision = column.type.precision
+        scale = column.type.scale
+        sql_type = SqlType.numeric(precision, scale)
     else:
         raise ValueError(f'Invalid StructField datatype for column \
                          `{column.name}` : {column.type}')
