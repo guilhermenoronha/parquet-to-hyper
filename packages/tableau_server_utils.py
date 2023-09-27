@@ -48,17 +48,17 @@ class TableauServerUtils:
         Args:
             project_id (str): project id
             hyper_path (str): hyper file path. Eg: path/hyper.file
-            mode (str): publish mode. Accept ovewrite or append mode.
-            Defaults to ovewrite.
+            mode (str): publish mode. Accept overwrite or append mode.
+            Defaults to overwrite.
         """
         logging.info(f'Signing into the server {self.server.baseurl}')
         with self.server.auth.sign_in(self.tableau_auth):
-            if mode == 'ovewrite':
+            if mode == 'overwrite':
                 publish_mode = TSC.Server.PublishMode.Overwrite
             elif mode == 'append':
                 publish_mode = TSC.Server.PublishMode.Append
             else:
-                raise ValueError(f'Error! Mode must be ovewrite or append.\
+                raise ValueError(f'Error! Mode must be overwrite or append.\
                                  Received {mode}')
             datasource = TSC.DatasourceItem(project_id=project_id)
             logging.info('Publishing Hyper file into the server!')
