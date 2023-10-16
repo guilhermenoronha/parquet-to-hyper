@@ -7,7 +7,16 @@ Package to convert parquet files into a single hyper file.
 
 ## Benchmarking
 
-To be announced soon.
+The package was benchmarked using a Latitude 3420 Dell Notebook with 16GB of Memory RAM, a 250GB SSD, and an i7-1165G7 CPU. The time may vary using different architectures. The table used for benchmarking contained **60 columns**. Although the tests were carried with a maximum of 500 million of rows, the package supports higher amount of volume. The limitation is only to the size of a single parquet file (up to 30GB). For larger volumes, it's recommended to split them into multiple parquet files. Follow the results:
+
+| Rows (in millions) | Time (in seconds) | Parquet size (in MegaBytes) |
+|--------------------|-------------------|-----------------------------|
+| 1                  | 4.05              | 54                          |
+| 10                 | 36.8              | 520                         |
+| 100                | 412.6             | 4900                        |
+| 500                | 2669.25           | 25400                       |
+
+![parquet-to-hyper](https://github.com/guilhermenoronha/parquet-to-hyper/assets/2208226/f8c54a68-e689-4fb3-9d09-05122d220fee)
 
 ## How to use
 
