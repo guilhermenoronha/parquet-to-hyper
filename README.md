@@ -1,5 +1,6 @@
 # Parquet to Hyper
 [![](https://img.shields.io/static/v1?label=linter&message=flake8&color=green&logo=flake8)](https://flake8.pycqa.org/en/latest/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![](https://img.shields.io/static/v1?label=unit-tests&message=pytest&color=green&logo=pytest)](https://docs.pytest.org/en/latest/)
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/guilhermenoronha/parquet-to-hyper/python-package.yml?label=tests)
 
