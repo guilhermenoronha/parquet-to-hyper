@@ -5,31 +5,48 @@ import datetime as dt
 import os
 from tableauhyperapi import SqlType
 
+STRF_TIME = "%Y-%m-%d"
+
 
 @pytest.fixture
 def get_pyarrow_table():
+    A = "a"
+    B = "b"
+    US = "us"
+    UTF8 = "utf-8"
+    COL_NAMES = [
+        "int8",
+        "int16",
+        "int32",
+        "int64",
+        "string",
+        "float32",
+        "float64",
+        "bool",
+        "timestamp",
+        "date32",
+        "date64",
+        "binary",
+        "decimal128",
+    ]
     array = [
         pa.array([1, 2], type=pa.int8()),
         pa.array([1, 2], type=pa.int16()),
         pa.array([1, 2], type=pa.int32()),
         pa.array([1, 2], type=pa.int64()),
-        pa.array(['a', 'b'], type=pa.string()),
+        pa.array([A, B], type=pa.string()),
         pa.array([1.0, 1.5], type=pa.float32()),
         pa.array([1.0, 1.5], type=pa.float64()),
         pa.array([True, False], type=pa.bool_()),
-        pa.array([dt.datetime(2023, 1, 1, 0, 0, 0), dt.datetime.now()],
-                 type=pa.timestamp('us')),
+        pa.array(
+            [dt.datetime(2023, 1, 1, 0, 0, 0), dt.datetime.now()], type=pa.timestamp(US)
+        ),
         pa.array([dt.date(2023, 1, 1), dt.date.today()], type=pa.date32()),
         pa.array([dt.date(2023, 1, 1), dt.date.today()], type=pa.date64()),
-        pa.array([b'a', b'b'], type=pa.binary()),
-        pa.array([1234, 1234], type=pa.decimal128(7, 3))
+        pa.array([A.encode(UTF8), B.encode(UTF8)], type=pa.binary()),
+        pa.array([1234, 1234], type=pa.decimal128(7, 3)),
     ]
-    names = [
-        'int8', 'int16', 'int32', 'int64', 'string', 'float32',
-        'float64', 'bool', 'timestamp', 'date32', 'date64',
-        'binary', 'decimal128'
-    ]
-    yield pa.table(array, names=names)
+    yield pa.table(array, names=COL_NAMES)
 
 
 @pytest.fixture
@@ -56,7 +73,7 @@ def test_convert_struct_field(get_pyarrow_schema):
 
 def test_get_table_def(get_pyarrow_table):
     df = get_pyarrow_table
-    now = str(dt.datetime.today().strftime("%Y-%m-%d"))
+    now = str(dt.datetime.today().strftime(STRF_TIME))
     pa.parquet.write_table(df, now)
     with pa.parquet.ParquetFile(now) as file:
         table_def = hu.get_table_def(file)
@@ -77,11 +94,12 @@ def test_get_table_def(get_pyarrow_table):
 
 
 def test_get_parquet_files(get_pyarrow_table):
+    PARQUET = "parquet"
     df = get_pyarrow_table
-    now = str(dt.datetime.today().strftime("%Y-%m-%d"))
-    extension = '.parquet'
+    now = str(dt.datetime.today().strftime(STRF_TIME))
+    extension = "." + PARQUET
     filename = now + extension
     pa.parquet.write_table(df, filename)
-    files = hu.get_parquet_files('', extension.replace('.', ''))
+    files = hu.get_parquet_files("", extension.replace(".", ""))
     os.remove(filename)
     assert len(files) == 1
