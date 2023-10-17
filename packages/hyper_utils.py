@@ -1,6 +1,5 @@
 from pyarrow import ChunkedArray
-from tableauhyperapi import SqlType, TableDefinition, NULLABLE, NOT_NULLABLE, \
-                            TableName
+from tableauhyperapi import SqlType, TableDefinition, NULLABLE, NOT_NULLABLE, TableName
 from pyarrow.parquet import ParquetFile
 import glob
 import pyarrow as pa
@@ -18,6 +17,11 @@ def _convert_struct_field(column: ChunkedArray) -> TableDefinition.Column:
     Returns:
         Column: Column with Hyper SqlType
     """
+    S = "s"
+    MS = "ms"
+    NS = "ns"
+    US = "us"
+    DECIMAL = "decimal"
     if column.type == pa.string():
         sql_type = SqlType.text()
     elif column.type in [pa.date32(), pa.date64()]:
@@ -32,22 +36,25 @@ def _convert_struct_field(column: ChunkedArray) -> TableDefinition.Column:
         sql_type = SqlType.big_int()
     elif column.type == pa.bool_():
         sql_type = SqlType.bool()
-    elif column.type in [pa.timestamp('s'), pa.timestamp('ms'),
-                         pa.timestamp('us'), pa.timestamp('ns')]:
+    elif column.type in [
+        pa.timestamp(S),
+        pa.timestamp(MS),
+        pa.timestamp(US),
+        pa.timestamp(NS),
+    ]:
         sql_type = SqlType.timestamp()
     elif column.type == pa.binary():
         sql_type = SqlType.bytes()
-    elif str(column.type).startswith("decimal"):
+    elif str(column.type).startswith(DECIMAL):
         precision = column.type.precision
         scale = column.type.scale
         sql_type = SqlType.numeric(precision, scale)
     else:
-        raise ValueError(f'Invalid StructField datatype for column \
-                         `{column.name}` : {column.type}')
+        raise ValueError(
+            f"Invalid StructField datatype for column `{column.name}` : {column.type}"
+        )
     nullable = NULLABLE if column.nullable else NOT_NULLABLE
-    return TableDefinition.Column(name=column.name,
-                                  type=sql_type,
-                                  nullability=nullable)
+    return TableDefinition.Column(name=column.name, type=sql_type, nullability=nullable)
 
 
 def get_table_def(df: ParquetFile) -> TableDefinition:
@@ -61,14 +68,10 @@ def get_table_def(df: ParquetFile) -> TableDefinition:
     """
     schema = df.schema_arrow
     cols = list(map(_convert_struct_field, schema))
-    return TableDefinition(
-        table_name=TableName("Extract", "Extract"),
-        columns=cols
-    )
+    return TableDefinition(table_name=TableName("Extract", "Extract"), columns=cols)
 
 
-def get_parquet_files(parquet_folder: str,
-                      parquet_extension: str = None) -> list[str]:
+def get_parquet_files(parquet_folder: str, parquet_extension: str = None) -> list[str]:
     """Get list of parquet files in a folder
 
     Args:
@@ -82,9 +85,10 @@ def get_parquet_files(parquet_folder: str,
     Returns:
         list[str]: list of filenames
     """
-    ext = f"*.{parquet_extension}" if parquet_extension is not None else '*'
+    ext = f"*.{parquet_extension}" if parquet_extension is not None else "*"
     files = glob.glob(parquet_folder + ext)
     if len(files) == 0:
-        raise ValueError(f'Error! The parquet_folder: {parquet_folder} \
-                         returned no files!')
+        raise ValueError(
+            f"Error! The parquet_folder: {parquet_folder} returned no files!"
+        )
     return files
