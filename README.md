@@ -41,7 +41,7 @@ hf = HyperFile(parquet_folder, parquet_extension)
 
 ```python
 hyper_filename = 'path/to/your/db.hyper'            # Path to save hyper file with filename
-rows = hf.create_hyper_file(hyper_file_name)
+rows = hf.create_hyper_file(hyper_filename)
 print(f'Hyper created with {rows} rows.')
 ```
 
